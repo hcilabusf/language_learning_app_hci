@@ -1,0 +1,79 @@
+
+Group:
+
+1. Food
+  '食','Food'
+  '稻','Rice'
+  '水','Water'
+  '汤','Soup'
+  '蛋','Eggs'
+  '奶','Milk'
+  '菠','Spinach'
+  '茶','Tea'
+  '饺','Dumpling'
+  '渴','Thirsty'
+
+2. Animals
+
+  '狗','Dog'
+  '猫','Cat'
+  '马','Horse'
+  '鸭','Duck'
+  '龟','Turtle'
+  '猪','Pig'
+  '牛','Cow'
+  '虎','Tiger'
+  '狮','Lion'
+  '象','Elephant'
+
+3. Nature
+
+  '太阳','Sun'
+  '月亮','Moon'
+  '海','Sea'
+  '山','Mountain'
+  '河','River'
+  '树','Tree'
+  '风','Wind'
+  '云','Cloud'
+  '雨','Rain'
+  '丛林','Jungle'
+
+4. Places
+
+  '家','Home'
+  '文库','Library'
+  '火车站','Train Station'
+  '美国','America'
+  '餐厅','Restaurant'
+  '市场','Market'
+  '学校','School'
+  '剧院','Theatre'
+  '操场','Playground'
+  '法庭','Courtroom'
+
+5. Objects
+
+  '表','Table'
+  '椅子','Chair'
+  '框','Box'
+  '灯','Lamp'
+  '书','Book'
+  '碗','Bowl'
+  '纸','Paper'
+  '车','Car'
+  '袋','Bag'
+  '销','Pin'
+
+6. Colors
+
+  '红','Red'
+  '绿','Green'
+  '蓝','Blue'
+  '黄','Yellow'
+  '绀','Purple'
+  '白','White'
+  '黑','Black'
+  '橙','Orange'
+  '褐','Brown'
+  '粉','Pink'
