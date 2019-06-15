@@ -64,7 +64,7 @@ PAGES = [
     Page('红', 'red', is_test = True),
     Page('黄', 'yellow', is_test = True),
 
-    Page('黄', 'yellow', is_test = True, show_survey=1, marker_data='easyend'),
+    Page('黄', 'yellow', is_test = True, marker_data='easyend'),
 
     Page('黑', 'black', hint='黑 = black'),
     Page('橙', 'orange', hint='橙 = orange'),
@@ -74,15 +74,183 @@ PAGES = [
     Page('白 棕 粉', 'white brown pink'),
     Page('橙 绿 蓝', 'orange green blue'),
     Page('黑 红 粉', 'black red pink'),
-    Page('紫 棕 蓝', 'purple brown blue'),
+    Page('黄 棕 蓝', 'yellow brown blue'),
 
-    Page('橙 绿 蓝', 'orange green blue', is_test=True, marker_data = 'hardstart'),
+    Page('橙 红 蓝', 'orange red blue', is_test=True, marker_data = 'hardstart'),
     Page('黑 红 粉', 'black red pink', is_test=True),
-    Page('紫 棕 蓝', 'purple brown blue', is_test=True),
-    Page('橙 绿 蓝', 'orange green blue', is_test=True),
+    Page('黄 棕 白', 'yellow brown white', is_test=True),
+    Page('橙 粉 黑', 'orange pink black', is_test=True),
     Page('黑 红 粉', 'black red pink', is_test=True),
 
-    Page('绿 黄 白', 'green yellow white', is_test=True, show_survey=3,
+    Page('绿 黄 白', 'green yellow white', is_test=True,
+    marker_data='hardend'),
+
+    Page('食', 'food', hint='食 = food'),
+    Page('水', 'water', hint='水 = water'),
+    Page('奶', 'milk', hint='奶 = milk'),
+    Page('食', 'food'),
+    Page('奶', 'milk'),
+    Page('水', 'water'),
+    Page('食', 'food'),
+    Page('水', 'water'),
+    Page('奶', 'milk'),
+
+    Page('水', 'water', is_test=True, marker_data = 'easystart'),
+    Page('食', 'food', is_test=True),
+    Page('奶', 'milk', is_test=True),
+    Page('水', 'water', is_test=True),
+    Page('奶', 'milk', is_test=True),
+    Page('食', 'food', is_test=True,
+    marker_data='easyend'),
+
+    Page('菠', 'spinach', hint='菠 = spinach'),
+    Page('茶', 'tea', hint='茶 = tea'),
+    Page('渴', 'thirsty', hint='渴 = thirsty'),
+    Page('菠', 'spinach', hint='菠 = spinach'),
+    Page('饺', 'dumpling', hint='饺 = dumpling'),
+    Page('菠 茶 奶', 'spinach tea milk'),
+    Page('食 水 渴', 'food water thirsty'),
+    Page('饺 茶 菠', 'dumpling tea spinach'),
+    Page('茶 茶 渴', 'tea tea thirsty'),
+
+    Page('饺 茶 菠', 'dumpling tea spinach', is_test=True, marker_data = 'hardstart'),
+    Page('菠 茶 奶', 'spinach tea milk', is_test=True),
+    Page('食 水 渴', 'food water thirsty', is_test=True),
+    Page('茶 茶 渴', 'tea tea thirsty', is_test=True),
+    Page('水 茶 饺', 'water tea dumpling', is_test=True),
+    Page('黑 水 茶', 'black water tea', is_test=True, marker_data='hardend'),
+
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+
+    Page('', '', is_test=True, marker_data = 'hardstart'),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+
+    Page('', '', is_test=True,
+    marker_data='hardend'),
+
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+
+    Page('', '', is_test=True, marker_data = 'hardstart'),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+
+    Page('', '', is_test=True,
+    marker_data='hardend'),
+
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+
+    Page('', '', is_test=True, marker_data = 'hardstart'),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+
+    Page('', '', is_test=True,
+    marker_data='hardend'),
+
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+
+    Page('', '', is_test=True, marker_data = 'hardstart'),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+
+    Page('', '', is_test=True,
+    marker_data='hardend'),
+
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+
+    Page('', '', is_test=True, marker_data = 'hardstart'),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+
+    Page('', '', is_test=True,
+    marker_data='hardend'),
+
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+
+    Page('', '', is_test=True, marker_data = 'hardstart'),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+
+    Page('', '', is_test=True,
+    marker_data='hardend'),
+
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', '', hint=''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+    Page('', ''),
+
+    Page('', '', is_test=True, marker_data = 'hardstart'),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+    Page('', '', is_test=True),
+
+    Page('', '', is_test=True,
     marker_data='hardend')
 ]
 
@@ -125,7 +293,8 @@ def sendData (classLabel):
     milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
     data = str(trialNum) +";"+classLabel+";" + str(milliSec) + ";\n"
     sockett.sendData(data)
-    trialNum += 1 # increment trial number
+    if "end" in classLabel:
+        trialNum += 1 # increment trial number only after an end trial.
 
 @app.route('/question/')
 def question_start():

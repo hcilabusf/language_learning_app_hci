@@ -77,3 +77,88 @@ Group:
   '橙','Orange'
   '褐','Brown'
   '粉','Pink'
+
+
+
+GERMAN:
+
+1. Food
+
+  'Suppe','Soup'
+  'Saft','Juice'
+  'Ei','Egg'
+  'ApfelSaft','Apple Juice'
+  'Käse','Cheese'
+  'Salz','Salt'
+  'Knödel','Dumpling'
+  'Milk','Milch'
+  'Wasser','Water'
+  'Reis','Rice'
+
+
+2. Nature
+
+  'Baum','Tree'
+  'Meer','Sea'
+  'Luft','Air'
+  'Berg','Mountain'
+  'Regen','Rain'
+  'Blume','Flower'
+  'Sonne','Sun'
+  'Mond','Moon'
+  'Fluss','River'
+  'Wolke','Cloud'
+
+
+3. Clothing
+
+  'Hemd','Shirt'
+  'Hose','Pants'
+  'Clothes','Kleider'
+  'Rock','Skirt'
+  'Socken','Socks'
+  'Schuhe','Shoes'
+  'Knopf','Button'
+  'Mantel','Jacket'
+  'Jacke','Jacket'
+  'Hüte','Hats'
+
+4. Animals
+
+  'Kuh','Cow'
+  'Pferd','Horse'
+  'Ente','Duck'
+  'Hund','Dog'
+  'Katze','Cat'
+  'Bär','Bear'
+  'Vogel','Bird'
+  'Maus','Mouse'
+  'Fliege','Fly'
+  'Löwe','Lion'
+
+5. Objects
+
+  'Zeug','Stuff'
+  'Feuerzeug','Lighter'
+  'Spielzeug','Toy'
+  'Werkzeug','Tool'
+  'Fahrzeug','Vehicle'
+  'Flugzeug','Airplane'
+  'Stuhl','Chair'
+  'Tisch','Table'
+  'Buch','Book'
+  'Stift','Pen'
+
+
+6. Places
+
+  'Bibliothek','Library'
+  'Bahnhöfe','Train Station'
+  'Gebäude','Building'
+  'Garten','Garden'
+  'Zimmer','Room'
+  'Stadt','City'
+  'Brücke','Bridge'
+  'Dorf','Village'
+  'Markt','Market'
+  'Straße','Street'
