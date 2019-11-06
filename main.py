@@ -14,12 +14,10 @@ from survey import SURVEY
 
 from flask import flash, redirect, render_template, request, session, url_for
 from SocketClass import Socket_Class # import the socket class to send markers
-from flask_socketio import SocketIO, emit
 
 #from Data import User
 
 app = flask.Flask(__name__)
-socketio = SocketIO(app)
 
 app.config['DEBUG'] = True
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -29,31 +27,8 @@ app.secret_key = 'dfasdfasdfasdf'
 
 trialNum = 0
 canSendMarker = False
-sockett = None # socket variable created
-ROOMS = {}
-
-@socketio.on('create', namespace='/')
-def on_create(data):
-    print("Connected a client")
-    import pdb; pdb.set_trace()
-    """Create a game lobby"""
-    data = {"name" : "test"}
-    room = data["name"]
-    ROOMS[room] = "on"
-    join_room(room)
-    emit('join_room', {'room': room})
-
-@socketio.on('join', namespace='/join')
-def on_join(data):
-	# Join a room
-    data = {"name" : "test"}
-    room = data['room']
-    if room in ROOMS:
-        join_room(room)
-        send(ROOMS[room].to_json(), room=room)
-        print("Connecting to a room")
-    else:
-        emit('error', {'error': 'Unable to join room. Room does not exist.'})
+HOSTS = [("127.0.0.1", 8080), ("127.0.0.1", 8081)]
+SOCKETS = [None, None]
 
 def send_data(class_label):
     global trialNum
@@ -61,23 +36,24 @@ def send_data(class_label):
 
     milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
     data = "{};{};,{};\n".format(trialNum, class_label, milliSec)
-    #data = str(trialNum) +";"+classLabel+";" + str(milliSec) + ";\n"
-    #emit(trialNum)
-    #import pdb; pdb.set_trace()
-    emit(trialNum, namespace='/', broadcast=True)
+    for socket in SOCKETS:
+        socket.sendData(data)
     trialNum += 1 # increment trial number
 
 """
 A function that opens a socket with Matlab PC
 """
-def openSocket ():
-    global sockett
+def openSocket():
+    print("Waiting for connections")
+    connections = [False] * 2
     try:
-        #sockett = Socket_Class("192.168.2.201", 30000) # dor matlab server
-        sockett = Socket_Class("127.0.0.1", 8080) # for dummy server
-        if sockett == None:
-            return False
-        return sockett.openSocket()
+        for i in range(len(connections)):
+            host, port = HOSTS[i][0], HOSTS[i][1]
+            socket = Socket_Class(host, port) # for dummy server
+            if socket:
+                SOCKETS[i] = socket
+                connections[i] = socket.openSocket()
+        return all(x for x in connections)
     except Exception as e:
         print(e)
         return False
@@ -85,13 +61,14 @@ def openSocket ():
 '''
 A function that sends the marker's data through socket class and increment trial number
 '''
-def sendData (classLabel):
-    global sockett, trialNum
-
-    milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
-    data = str(trialNum) +";"+classLabel+";" + str(milliSec) + ";\n"
-    sockett.sendData(data)
-    trialNum += 1 # increment trial number
+#def sendData (classLabel):
+#    global trialNum
+#
+#    milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
+#    data = str(trialNum) +";"+classLabel+";" + str(milliSec) + ";\n"
+#    for socket in SOCKETS:
+#        socket.sendData(data)
+#    trialNum += 1 # increment trial number
 
 @app.route('/question/')
 def question_start():
@@ -103,7 +80,7 @@ def question_start():
     send_data('baselineend')
     time.sleep(0.5)
     #sendData('easystart')
-    send_data('easystart')
+    send_Data('easystart')
     return redirect(url_for('question', page=0))
 
 @app.route('/question/<int:page>', methods=['GET', 'POST'])
@@ -197,6 +174,3 @@ def survey(survey_num):
 
     return render_template('survey.html', survey_num=survey_num, next_page=next_page, url=SURVEY[survey_num - 1])
 
-
-if __name__ == "__main__":
-    socketio.run(app)
