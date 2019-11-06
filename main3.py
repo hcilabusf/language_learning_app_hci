@@ -7,11 +7,13 @@ import flask
 import logging
 import time
 import uuid
+from _thread import start_new_thread
+import threading
 
 from datetime import datetime
 from pages import PAGES, Page
 from survey import SURVEY
-from server import SimpleChat
+from socketserver2 import SocketServer
 
 from flask import flash, redirect, render_template, request, session, url_for
 from SocketClass import Socket_Class # import the socket class to send markers
@@ -29,9 +31,9 @@ app.secret_key = 'dfasdfasdfasdf'
 
 trialNum = 0
 canSendMarker = False
-server = None
 sockett = None # socket variable created
-ROOMS = {}
+SOCKET_SERVER_IP = "127.0.0.1"
+SOCKET_SERVER_PORT = 8000
 
 def send_data(class_label):
     global trialNum
@@ -40,10 +42,8 @@ def send_data(class_label):
     milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
     data = "{};{};,{};\n".format(trialNum, class_label, milliSec)
     #data = str(trialNum) +";"+classLabel+";" + str(milliSec) + ";\n"
-    #emit(trialNum)
-    #import pdb; pdb.set_trace()
-    emit(trialNum, namespace='/', broadcast=True)
     trialNum += 1 # increment trial number
+    sockett.sendData(data)
 
 """
 A function that opens a socket with Matlab PC
@@ -52,7 +52,7 @@ def openSocket ():
     global sockett
     try:
         #sockett = Socket_Class("192.168.2.201", 30000) # dor matlab server
-        sockett = Socket_Class("127.0.0.1", 8080) # for dummy server
+        sockett = Socket_Class(SOCKET_SERVER_IP, SOCKET_SERVER_PORT) # for dummy server
         if sockett == None:
             return False
         return sockett.openSocket()
@@ -60,12 +60,12 @@ def openSocket ():
         print(e)
         return False
 
-def open_server():
-    global server
-    server = WebSocketServer('', 8000, SimpleChat)
-    server.serve_forever()
-    print("hi")
-    return True
+def open_server(host, port):
+    print("HHHHHHHHHHHHHHHHHHHHH")
+    server = SocketServer(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)
+    server.accept_connections()
+    #server = WebSocketServer(host, port, SimpleChat)
+    #server.serve_forever()
 
 '''
 A function that sends the marker's data through socket class and increment trial number
@@ -160,14 +160,8 @@ def question(page):
 
 @app.route('/')
 def hello_world():
-    open_server()
+    #return render_template("welcomePage.html")
     return render_template("welcomePage.html")
-#    if openSocket():
-#        session.pop('error_count', None)
-#        return render_template("welcomePage.html")
-#    else:
-#        print("Not connected")
-#
 
 @app.route('/survey/<int:survey_num>')
 def survey(survey_num):
@@ -185,4 +179,13 @@ def survey(survey_num):
     user.put()'''
 
     return render_template('survey.html', survey_num=survey_num, next_page=next_page, url=SURVEY[survey_num - 1])
+
+if __name__ == "__main__":
+    print(1)
+    threading.Thread(target=open_server, args=(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)).start()
+    #threading.Thread(target=app.run()).start()
+    print(2)
+    #start_new_thread(open_server(SOCKET_SERVER_IP, SOCKET_SERVER_PORT), ())
+    #start_new_thread(open_server(), (SOCKET_SERVER_IP, SOCKET_SERVER_PORT))
+    #start_new_thread(app.run(), ())
 

@@ -13,15 +13,13 @@ class Socket_Class():
     A function that opens a socket with Matlab PC
     """
     def openSocket(self):
-        connected = False
-        while not connected:
-            try:
-                # connecting to the server
-                connected = self.sockett.connect((self.host, self.port))
-                print ("the socket has successfully connected to Matlab on port == %s" %(self.host))
-            except Exception as e:
-                continue
-        return connected
+        try:
+            self.sockett = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            return True
+            #connected = self.sockett.connect((self.host, self.port))
+        except Exception as e:
+            print("Error creating socket, %s" % str(e))
+            return False
 
     """
     function that sends data throught the socket to Matlab PC
