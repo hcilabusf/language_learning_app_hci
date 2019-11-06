@@ -32,8 +32,11 @@ app.secret_key = 'dfasdfasdfasdf'
 trialNum = 0
 canSendMarker = False
 sockett = None # socket variable created
-SOCKET_SERVER_IP = "127.0.0.1"
-SOCKET_SERVER_PORT = 8000
+#SOCKET_SERVER_IP = "127.0.0.1"
+#SOCKET_SERVER_IP = "192.168.1.100"
+SOCKET_SERVER_IP = "0.0.0.0"
+SOCKET_SERVER_PORT = 8080
+SERVER = None
 
 def send_data(class_label):
     global trialNum
@@ -43,7 +46,8 @@ def send_data(class_label):
     data = "{};{};,{};\n".format(trialNum, class_label, milliSec)
     #data = str(trialNum) +";"+classLabel+";" + str(milliSec) + ";\n"
     trialNum += 1 # increment trial number
-    sockett.sendData(data)
+    SERVER.broadcast(data)
+    #sockett.sendData(data)
 
 """
 A function that opens a socket with Matlab PC
@@ -61,11 +65,15 @@ def openSocket ():
         return False
 
 def open_server(host, port):
-    print("HHHHHHHHHHHHHHHHHHHHH")
-    server = SocketServer(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)
-    server.accept_connections()
-    #server = WebSocketServer(host, port, SimpleChat)
-    #server.serve_forever()
+    t1 = threading.Thread(target=run_server, args=(SOCKET_SERVER_IP, SOCKET_SERVER_PORT))
+    t1.start()
+
+def run_server(host, port):
+    print("Opening server")
+    global SERVER
+    SERVER = SocketServer(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)
+    SERVER.accept_connections()
+
 
 '''
 A function that sends the marker's data through socket class and increment trial number
@@ -161,6 +169,7 @@ def question(page):
 @app.route('/')
 def hello_world():
     #return render_template("welcomePage.html")
+    open_server(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)
     return render_template("welcomePage.html")
 
 @app.route('/survey/<int:survey_num>')
@@ -180,12 +189,9 @@ def survey(survey_num):
 
     return render_template('survey.html', survey_num=survey_num, next_page=next_page, url=SURVEY[survey_num - 1])
 
-if __name__ == "__main__":
-    print(1)
-    threading.Thread(target=open_server, args=(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)).start()
-    #threading.Thread(target=app.run()).start()
-    print(2)
-    #start_new_thread(open_server(SOCKET_SERVER_IP, SOCKET_SERVER_PORT), ())
-    #start_new_thread(open_server(), (SOCKET_SERVER_IP, SOCKET_SERVER_PORT))
-    #start_new_thread(app.run(), ())
-
+#if __name__ == "__main__":
+#    t1 = threading.Thread(target=open_server, args=(SOCKET_SERVER_IP, SOCKET_SERVER_PORT))
+#    t2 = threading.Thread(target=app.run)
+#
+#    t1.start()
+#    t2.start()

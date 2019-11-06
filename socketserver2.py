@@ -14,7 +14,7 @@ class SocketServer:
 
     def clientthread(self, conn, addr):
         # sends a message to the client whose user object is conn
-        conn.send("Welcome to this chatroom!".encode())
+        #conn.send("Welcome to this chatroom!".encode())
         while True:
             try:
                 message = conn.recv(2048)
@@ -30,16 +30,27 @@ class SocketServer:
             except Exception:
                 continue
 
-    def broadcast(self, message, connection):
-        for clients in self.list_of_clients:
-            if clients != connection:
-                try:
-                    clients.send(message)
-                except Exception:
-                    clients.close()
+    #def broadcast(self, message, connection):
+    #    for clients in self.list_of_clients:
+    #        if clients != connection:
+    #            try:
+    #                clients.send(message)
+    #            except Exception:
+    #                clients.close()
 
-                    # if the link is broken, we remove the client
-                    self.remove(clients)
+    #                # if the link is broken, we remove the client
+    #                self.remove(clients)
+
+    def broadcast(self, message):
+        #print("ALL connections: %s" % self.list_of_clients)
+        print("Number of connections: %s" % len(self.list_of_clients))
+        for clients in self.list_of_clients:
+            try:
+                print("Sending %s to: %s" % (message, clients))
+                clients.send(message.encode())
+            except Exception:
+                clients.close()
+                self.remove(clients)
 
     def remove(self, connection):
         if connection in self.list_of_clients:
@@ -48,7 +59,7 @@ class SocketServer:
     def accept_connections(self):
         while True:
             conn, addr = self.server.accept()
-            conn.send("Welcome to this chatroom!".encode())
+            #conn.send("Welcome to this chatroom!".encode())
 
             self.list_of_clients.append(conn)
 
