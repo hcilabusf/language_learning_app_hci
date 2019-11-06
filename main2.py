@@ -3,25 +3,23 @@
 from __future__ import unicode_literals
 
 import collections
-import logging
-
-import uuid
-from datetime import datetime
-import time
-
 import flask
+import logging
+import time
+import uuid
 
-from flask import flash
-from flask import redirect
-from flask import render_template
-from flask import request
-from flask import session
-from flask import url_for
+from datetime import datetime
+from pages import PAGES, Page
+from survey import SURVEY
+
+from flask import flash, redirect, render_template, request, session, url_for
 from SocketClass import Socket_Class # import the socket class to send markers
+from flask_socketio import SocketIO, emit
 
 #from Data import User
 
 app = flask.Flask(__name__)
+socketio = SocketIO(app)
 
 app.config['DEBUG'] = True
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -29,59 +27,45 @@ app.debug = True
 
 app.secret_key = 'dfasdfasdfasdf'
 
-
-class Page(object):
-    def __init__(self, chinese, answer, hint='', error_count_before_hint=2, show_survey=0):
-        self.chinese = chinese
-        self.answer = answer
-        self.error_count_before_hint = error_count_before_hint
-        self.hint = hint
-        self.show_survey = show_survey
-
-
-SURVEY = [
-    'https://docs.google.com/forms/d/e/1FAIpQLSeSlLSn8VEeDRvt5S1orlTDUd-Io0N8WNHhobFihuTOqvEoTA/viewform?embedded=true',
-    'https://docs.google.com/forms/d/e/1FAIpQLSc7KVv-Csr8IqZWqWF_5TMfvLUz9A2tNwaZ-V4eafoAMdMxwQ/viewform?embedded=true',
-    'https://docs.google.com/forms/d/e/1FAIpQLSfqjfzXdnizoZ3voFvV9zHJGwFI8lmSXWSjtuDCQibD4fY1Aw/viewform?embedded=true']
-
-PAGES = [
-    Page('红', 'red', hint='红 = red'),
-    Page('黄', 'yellow', hint='黄 = yellow'),
-    Page('红', 'red'),
-    Page('黄', 'yellow'),
-    Page('红', 'red'),
-    Page('黄', 'yellow'),
-    Page('红', 'red'),
-    Page('黄', 'yellow'),
-    Page('红', 'red'),
-    Page('黄', 'yellow', show_survey=1),
-
-    Page('黑', 'black', hint='黑 = black'),
-    Page('橙', 'orange', hint='橙 = orange'),
-    Page('棕', 'brown', hint='棕 = brown'),
-    Page('粉', 'pink', hint='粉 = pink'),
-    Page('白', 'white', hint='白 = white'),
-    Page('白 棕 粉', 'white brown pink'),
-    Page('橙 绿 蓝', 'orange green blue'),
-    Page('黑 红 粉', 'black red pink'),
-    Page('紫 棕 蓝', 'purple brown blue'),
-    Page('绿 黄 白', 'green yellow white', show_survey=3),
-]
-
-'''Page('绿', 'green', hint='绿 = green'),
-    Page('绿', 'green'),
-    Page('紫', 'purple', hint='紫 = purple'),
-    Page('紫', 'purple'),
-    Page('绿 紫', 'green purple'),
-    Page('紫 绿', 'purple green'),
-    Page('蓝', 'blue', hint='蓝 = blue'),
-    Page('蓝', 'blue'),
-    Page('蓝 绿', 'blue green'),
-    Page('紫 蓝', 'purple blue', show_survey=2),'''
-
 trialNum = 0
 canSendMarker = False
 sockett = None # socket variable created
+ROOMS = {}
+
+@socketio.on('create', namespace='/')
+def on_create(data):
+    print("Connected a client")
+    import pdb; pdb.set_trace()
+    """Create a game lobby"""
+    data = {"name" : "test"}
+    room = data["name"]
+    ROOMS[room] = "on"
+    join_room(room)
+    emit('join_room', {'room': room})
+
+@socketio.on('join', namespace='/join')
+def on_join(data):
+	# Join a room
+    data = {"name" : "test"}
+    room = data['room']
+    if room in ROOMS:
+        join_room(room)
+        send(ROOMS[room].to_json(), room=room)
+        print("Connecting to a room")
+    else:
+        emit('error', {'error': 'Unable to join room. Room does not exist.'})
+
+def send_data(class_label):
+    global trialNum
+    print("sending!")
+
+    milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
+    data = "{};{};,{};\n".format(trialNum, class_label, milliSec)
+    #data = str(trialNum) +";"+classLabel+";" + str(milliSec) + ";\n"
+    #emit(trialNum)
+    #import pdb; pdb.set_trace()
+    emit(trialNum, namespace='/', broadcast=True)
+    trialNum += 1 # increment trial number
 
 """
 A function that opens a socket with Matlab PC
@@ -111,12 +95,15 @@ def sendData (classLabel):
 
 @app.route('/question/')
 def question_start():
-    sendData('baselinestart')
+    #sendData('baselinestart')
+    send_data('baselinestart')
     session['uid'] = uuid.uuid1()
     time.sleep(3)
-    sendData('baselineend')
+    #sendData('baselineend')
+    send_data('baselineend')
     time.sleep(0.5)
-    sendData('easystart')
+    #sendData('easystart')
+    send_data('easystart')
     return redirect(url_for('question', page=0))
 
 @app.route('/question/<int:page>', methods=['GET', 'POST'])
@@ -141,7 +128,8 @@ def question(page):
     # this is called after I press next on the survey
     if canSendMarker:
         if page == 10: # I will start with hard tasks
-            sendData('hardstart')
+            #sendData('hardstart')
+            send_data('hardstart')
             canSendMarker = False # prevent from sending markers on wrong answers
 
     if page >= len(PAGES):
@@ -162,11 +150,13 @@ def question(page):
             canSendMarker = True
             if canSendMarker:
                 if page == 9: # I finished the easy and will start survey so I will send easyend before starting the survey
-                    sendData('easyend')
+                    #sendData('easyend')
+                    send_data('easyend')
                     # I didn't change canSendMarker to false here because I need to send hard start when the new page 10 is loaded
 
                 if page == len(PAGES) - 1: # I finished the hard and will start survey so I will send hardend before starting the survey
-                    sendData('hardend')
+                    #sendData('hardend')
+                    send_data('hardend')
 
             if PAGES[page].show_survey != 0:
                 return redirect(url_for('survey', survey_num=PAGES[page].show_survey, next_page=page + 1))
@@ -206,3 +196,7 @@ def survey(survey_num):
     user.put()'''
 
     return render_template('survey.html', survey_num=survey_num, next_page=next_page, url=SURVEY[survey_num - 1])
+
+
+if __name__ == "__main__":
+    socketio.run(app)
