@@ -43,18 +43,21 @@ def send_data(class_label):
     print("sending!")
 
     milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
-    data = "{};{};,{};\n".format(trialNum, class_label, milliSec)
+    data = "{};{};{};\n".format(trialNum, class_label, milliSec)
     #data = str(trialNum) +";"+classLabel+";" + str(milliSec) + ";\n"
     trialNum += 1 # increment trial number
     SERVER.broadcast(data)
+    #SERVER.server.send(data.encode())
+    #sockett.sendData(data)
     #sockett.sendData(data)
 
 """
 A function that opens a socket with Matlab PC
 """
-def openSocket ():
+def openSocket():
     global sockett
     try:
+        print("Opening socket!")
         #sockett = Socket_Class("192.168.2.201", 30000) # dor matlab server
         sockett = Socket_Class(SOCKET_SERVER_IP, SOCKET_SERVER_PORT) # for dummy server
         if sockett == None:
@@ -65,6 +68,10 @@ def openSocket ():
         return False
 
 def open_server(host, port):
+    global sockett
+    connected = openSocket()
+    if connected:
+        print("Connected sockett")
     t1 = threading.Thread(target=run_server, args=(SOCKET_SERVER_IP, SOCKET_SERVER_PORT))
     t1.start()
 
