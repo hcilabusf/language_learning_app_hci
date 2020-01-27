@@ -11,10 +11,14 @@
 {#            <div id="chinese"></div>#}
 {#            <div id="hint"></div>#}
 {#            <div id="result"></div>#}
+            {% if page.is_test %}
+              <h1>Test Question</h1>
+            {% endif %}
             <h2 class="card-title">Chinese: {{ page.chinese }}</h2>
 {#            <p>{{ session.error_count }}, {{ page.error_count_before_hint }} </p>#}
             <p><p class="card-text">
-            {% if session.error_count[current_page] < page.error_count_before_hint %}
+
+            {% if (session.error_count[current_page] < page.error_count_before_hint) %}
                 Hint: {{ page.hint }}
             {% else %}
                 Hint: {{ page.answer }}

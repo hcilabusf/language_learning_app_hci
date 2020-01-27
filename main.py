@@ -21,6 +21,7 @@ app.debug = True
 
 app.secret_key = 'dfasdfasdfasdf'
 
+
 trialNum = 0
 canSendMarker = False
 sockett = None # socket variable created
@@ -35,6 +36,7 @@ def send_data(class_label):
     print("sending!")
 
     milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
+
     data = "{};{};{};\n".format(trialNum, class_label, milliSec)
     trialNum += 1 # increment trial number
     SERVER.broadcast(data)
@@ -61,6 +63,7 @@ def run_server(host, port):
     SERVER = SocketServer(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)
     SERVER.accept_connections()
 
+
 @app.route('/question/')
 def question_start():
     send_data('baselinestart')
@@ -68,7 +71,9 @@ def question_start():
     time.sleep(3)
     send_data('baselineend')
     time.sleep(0.5)
+
     send_data('easystart')
+
     return redirect(url_for('question', page=0))
 
 @app.route('/question/<int:page>', methods=['GET', 'POST'])
@@ -77,27 +82,39 @@ def question(page):
     page_str = str(page)
 
     # this is called after I press next on the survey
+
     if canSendMarker:
         if page == 10: # I will start with hard tasks
             #sendData('hardstart')
             send_data('hardstart')
             canSendMarker = False # prevent from sending markers on wrong answers
 
+
     if page >= len(PAGES):
         session.pop('error_count')
         session.pop('uid')
         return render_template("cong.html")
 
+    # Adding condition for method!=POST so, we only send marker when page loads,
+    # not twice, for when page loads, and when the user submits an answer.
+    if PAGES[page].marker_data!='' and request.method!='POST':
+        sendData(PAGES[page].marker_data)
+
     if request.method == 'POST':
         expect = PAGES[page].answer
+
         if expect == '':
             return redirect(url_for('question', page=page + 1))
         got = request.form['answer']
         if got != expect:
-            session['error_count'][page_str] += 1
-            flash('Wrong!')
-            return redirect(url_for('question', page=page))
+            if PAGES[page].is_test:
+                return redirect(url_for('question', page=page+1))
+            else:
+                session['error_count'][page_str] += 1
+                flash('Wrong!')
+                return redirect(url_for('question', page=page))
         else: # means the answer is correct
+
             canSendMarker = True
             if canSendMarker:
                 if page == 9: # I finished the easy and will start survey so I will send easyend before starting the survey
@@ -106,6 +123,7 @@ def question(page):
 
                 if page == len(PAGES) - 1: # I finished the hard and will start survey so I will send hardend before starting the survey
                     send_data('hardend')
+
 
             if PAGES[page].show_survey != 0:
                 return redirect(url_for('survey', survey_num=PAGES[page].show_survey, next_page=page + 1))
