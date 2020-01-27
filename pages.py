@@ -41,10 +41,3 @@ PAGES = [
     Page('蓝 绿', 'blue green'),
     Page('紫 蓝', 'purple blue', show_survey=2),'''
 
-class Page(object):
-    def __init__(self, chinese, answer, hint='', error_count_before_hint=2, show_survey=0):
-        self.chinese = chinese
-        self.answer = answer
-        self.error_count_before_hint = error_count_before_hint
-        self.hint = hint
-        self.show_survey = show_survey
