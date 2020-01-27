@@ -15,19 +15,11 @@ class Socket_Class():
     def openSocket(self):
         try:
             self.sockett = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            print ("Socket successfully created")
-        except socket.error as err:
-            print ("socket creation failed with error %s" %(err))
-            return False
-
-        try:
-            # connecting to the server
-            self.sockett.connect((self.host, self.port))
-            print ("the socket has successfully connected to Matlab on port == %s" %(self.host))
+            return True
+            #connected = self.sockett.connect((self.host, self.port))
         except Exception as e:
-            print(e)
+            print("Error creating socket, %s" % str(e))
             return False
-        return True
 
     """
     function that sends data throught the socket to Matlab PC
