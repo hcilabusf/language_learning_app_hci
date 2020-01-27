@@ -12,6 +12,7 @@ class SocketServer:
         self.server = server
         self.list_of_clients = []
 
+    """ Thread for new client """
     def clientthread(self, conn, addr):
         # sends a message to the client whose user object is conn
         #conn.send("Welcome to this chatroom!".encode())
@@ -30,17 +31,8 @@ class SocketServer:
             except Exception:
                 continue
 
-    #def broadcast(self, message, connection):
-    #    for clients in self.list_of_clients:
-    #        if clients != connection:
-    #            try:
-    #                clients.send(message)
-    #            except Exception:
-    #                clients.close()
 
-    #                # if the link is broken, we remove the client
-    #                self.remove(clients)
-
+    """ Broadcast a message to all connected clients"""
     def broadcast(self, message):
         #print("ALL connections: %s" % self.list_of_clients)
         print("Number of connections: %s" % len(self.list_of_clients))
@@ -52,21 +44,20 @@ class SocketServer:
                 clients.close()
                 self.remove(clients)
 
+    """ Remove a sockets connection """
     def remove(self, connection):
         if connection in self.list_of_clients:
             self.list_of_clients.remove(connection)
 
+    """ Accept new socketes connections """
     def accept_connections(self):
         while True:
             conn, addr = self.server.accept()
-            #conn.send("Welcome to this chatroom!".encode())
 
             self.list_of_clients.append(conn)
 
             # prints the address of the user that just connected
             print(addr[0] + " connected")
 
-            # creates and individual thread for every user
-            # that connects
-            #start_new_thread(self.clientthread, (conn, addr))
+            # creates and individual thread for every user that connects
             threading.Thread(target=self.clientthread, args=((conn, addr)))
