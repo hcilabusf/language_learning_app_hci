@@ -5,6 +5,8 @@ class Page(object):
         self.error_count_before_hint = error_count_before_hint
         self.hint = hint
         self.show_survey = show_survey
+        self.is_test = is_test
+        self.marker_data = marker_data
 
 PAGES = [
     Page('红', 'red', hint='红 = red'),
