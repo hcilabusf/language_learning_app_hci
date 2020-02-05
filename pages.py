@@ -20,6 +20,17 @@ PAGES = [
     Page('黄', 'yellow'),
     Page('红', 'red'),
     Page('黄', 'yellow', show_survey=1),
+    
+    Page('绿', 'green', hint='绿 = green'),
+    Page('绿', 'green'),
+    Page('紫', 'purple', hint='紫 = purple'),
+    Page('紫', 'purple'),
+    Page('绿 紫', 'green purple'),
+    Page('紫 绿', 'purple green'),
+    Page('蓝', 'blue', hint='蓝 = blue'),
+    Page('蓝', 'blue'),
+    Page('蓝 绿', 'blue green'),
+    Page('紫 蓝', 'purple blue', show_survey=2),
 
     Page('黑', 'black', hint='黑 = black'),
     Page('橙', 'orange', hint='橙 = orange'),
@@ -33,14 +44,5 @@ PAGES = [
     Page('绿 黄 白', 'green yellow white', show_survey=3),
 ]
 
-'''Page('绿', 'green', hint='绿 = green'),
-    Page('绿', 'green'),
-    Page('紫', 'purple', hint='紫 = purple'),
-    Page('紫', 'purple'),
-    Page('绿 紫', 'green purple'),
-    Page('紫 绿', 'purple green'),
-    Page('蓝', 'blue', hint='蓝 = blue'),
-    Page('蓝', 'blue'),
-    Page('蓝 绿', 'blue green'),
-    Page('紫 蓝', 'purple blue', show_survey=2),'''
+    
 
