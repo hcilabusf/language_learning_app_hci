@@ -1,5 +1,6 @@
 class Page(object):
-    def __init__(self, chinese, answer, hint='', error_count_before_hint=2, show_survey=0):
+    def __init__(self, chinese, answer, hint='', error_count_before_hint=2, show_survey=0,
+                 is_test=False, marker_data = ''):
         self.chinese = chinese
         self.answer = answer
         self.error_count_before_hint = error_count_before_hint
