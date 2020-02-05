@@ -1,22 +1,19 @@
 import socket
 
-class Socket_Class():
-
-    listening = True
-
+class SocketClass():
     def __init__(self, host, port):
+        self.listening = True
         self.host = host
         self.port = port
         self.allDataReceived = []
+        self.my_scoket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     """
     A function that opens a socket with Matlab PC
     """
-    def openSocket(self):
+    def open_socket(self):
         try:
-            self.sockett = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            return True
-            #connected = self.sockett.connect((self.host, self.port))
+            connected = self.my_socket.connect((self.host, self.port))
         except Exception as e:
             print("Error creating socket, %s" % str(e))
             return False
@@ -24,24 +21,24 @@ class Socket_Class():
     """
     function that sends data throught the socket to Matlab PC
     """
-    def sendData(self, data):
+    def send_data(self, data):
         try:
-            self.sockett.sendall(data.encode('utf-8')) # send marker data to Matlab PC
+            self.my_socket.sendall(data.encode('utf-8')) # send marker data to Matlab PC
         except Exception as e:
             print(e)
 
     """
     Get method that returns allDataRecieved list
     """
-    def getAllDataReceived (self):
+    def get_all_data_received (self):
         return self.allDataReceived
 
     """
     A function that closes the socket
     """
-    def closeSocket(self):
+    def close_socket(self):
         try:
             self.listening = False
-            self.sockett.close()
+            self.my_socket.close()
         except Exception as e:
             print(e)

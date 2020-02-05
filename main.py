@@ -2,14 +2,13 @@
 
 from __future__ import unicode_literals
 
-import flask
 import time
 import uuid
-import threading
 
+import flask
 from pages import PAGES, Page
 from survey import SURVEY
-from simple_server import SocketServer
+from socket_class import SocketClass
 
 from flask import flash, redirect, render_template, request, session, url_for
 
@@ -21,15 +20,13 @@ app.debug = True
 
 app.secret_key = 'dfasdfasdfasdf'
 
-
 trialNum = 0
 canSendMarker = False
-sockett = None # socket variable created
-#SOCKET_SERVER_IP = "127.0.0.1"
-#SOCKET_SERVER_IP = "192.168.1.100"
-SOCKET_SERVER_IP = "0.0.0.0" # Might require change
-SOCKET_SERVER_PORT = 8080 # Might require change
-SERVER = None
+server_socket = None
+DUMMY_IP = "127.0.0.1"
+DUMMY_PORT = 8080
+SERVER_IP = "0.0.0.0" # Might require change
+SERVER_PORT = 8080 # Might require change
 
 def send_data(class_label):
     global trialNum
@@ -39,30 +36,21 @@ def send_data(class_label):
 
     data = "{};{};{};\n".format(trialNum, class_label, milliSec)
     trialNum += 1 # increment trial number
-    SERVER.broadcast(data)
+    server_socket.send_data(data)
 
 """ Runs the server in a separate thread
     :param host: Server ip address
     :param port: Server port
 """
-def open_server(host, port):
-    global sockett
+def connect_server_socket(dummy_server=False):
+    global server_socket
+    if dummy_server:
+        server_socket = SocketClass(DUMMY_IP, DUMMY_PORT)
+    else:
+        server_socket = SocketClass(SERVER_IP, SERVER_PORT)
     connected = openSocket()
     if connected:
-        print("Connected sockett")
-    t1 = threading.Thread(target=run_server, args=(SOCKET_SERVER_IP, SOCKET_SERVER_PORT))
-    t1.start()
-
-""" Initiate the server
-    :param host: Server ip address
-    :param port: Server port
-"""
-def run_server(host, port):
-    print("Opening server")
-    global SERVER
-    SERVER = SocketServer(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)
-    SERVER.accept_connections()
-
+        print("Connected socket")
 
 @app.route('/question/')
 def question_start():
@@ -83,12 +71,9 @@ def question(page):
 
     # this is called after I press next on the survey
 
-    if canSendMarker:
-        if page == 10: # I will start with hard tasks
-            #sendData('hardstart')
-            send_data('hardstart')
-            canSendMarker = False # prevent from sending markers on wrong answers
-
+    if canSendMarker and page == 10:
+        server_socket.send_data('hardstart')
+        canSendMarker = False # prevent from sending markers on wrong answers
 
     if page >= len(PAGES):
         session.pop('error_count')
@@ -98,7 +83,7 @@ def question(page):
     # Adding condition for method!=POST so, we only send marker when page loads,
     # not twice, for when page loads, and when the user submits an answer.
     if PAGES[page].marker_data!='' and request.method!='POST':
-        sendData(PAGES[page].marker_data)
+        server_socket.send_data(PAGES[page].marker_data)
 
     if request.method == 'POST':
         expect = PAGES[page].answer
@@ -109,10 +94,9 @@ def question(page):
         if got != expect:
             if PAGES[page].is_test:
                 return redirect(url_for('question', page=page+1))
-            else:
-                session['error_count'][page_str] += 1
-                flash('Wrong!')
-                return redirect(url_for('question', page=page))
+            session['error_count'][page_str] += 1
+            flash('Wrong!')
+            return redirect(url_for('question', page=page))
         else: # means the answer is correct
 
             canSendMarker = True
@@ -142,7 +126,7 @@ def question(page):
 
 @app.route('/')
 def hello_world():
-    open_server(SOCKET_SERVER_IP, SOCKET_SERVER_PORT)
+    connect_server_socket(dummy=False)
     return render_template("welcomePage.html")
 
 @app.route('/survey/<int:survey_num>')
