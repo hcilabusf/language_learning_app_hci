@@ -6,14 +6,15 @@ class SocketClass():
         self.host = host
         self.port = port
         self.allDataReceived = []
-        self.my_scoket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     """
     A function that opens a socket with Matlab PC
     """
     def open_socket(self):
         try:
-            connected = self.my_socket.connect((self.host, self.port))
+            self.my_socket.connect((self.host, self.port))
+            return True
         except Exception as e:
             print("Error creating socket, %s" % str(e))
             return False
