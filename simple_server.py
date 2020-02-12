@@ -13,7 +13,7 @@ class SocketServer:
         self.list_of_clients = []
 
     """ Thread for new client """
-    def clientthread(self, conn, addr):
+    def client_thread(self, conn, addr):
         # sends a message to the client whose user object is conn
         #conn.send("Welcome to this chatroom!".encode())
         while True:
@@ -60,4 +60,4 @@ class SocketServer:
             print(addr[0] + " connected")
 
             # creates and individual thread for every user that connects
-            threading.Thread(target=self.clientthread, args=((conn, addr)))
+            threading.Thread(target=self.client_thread, args=((conn, addr)))
