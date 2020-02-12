@@ -39,18 +39,23 @@ def send_data(class_label):
     server_socket.send_data(data)
 
 """ Runs the server in a separate thread
-    :param host: Server ip address
-    :param port: Server port
+    Args:
+        dummy_server (boolean): Flag to connect to dummy_server
+    Returns:
+        boolean: Whether connection was established
 """
-def connect_server_socket(dummy_server=False):
+def connect_to_server(dummy_server=False):
     global server_socket
     if dummy_server:
         server_socket = SocketClass(DUMMY_IP, DUMMY_PORT)
     else:
         server_socket = SocketClass(SERVER_IP, SERVER_PORT)
-    connected = openSocket()
+    connected = server_socket.open_socket()
+
     if connected:
-        print("Connected socket")
+        print("Connected to server")
+        return True
+    return False
 
 @app.route('/question/')
 def question_start():
@@ -126,8 +131,10 @@ def question(page):
 
 @app.route('/')
 def hello_world():
-    connect_server_socket(dummy=False)
-    return render_template("welcomePage.html")
+    if connect_to_server(dummy_server=True):
+        return render_template("welcomePage.html")
+    else:
+        return "Failed to connect to server"
 
 @app.route('/survey/<int:survey_num>')
 def survey(survey_num):
