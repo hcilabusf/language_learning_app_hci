@@ -4,10 +4,10 @@ from _thread import start_new_thread
 import threading
 
 class SocketServer:
-    def __init__(self, ip, host):
+    def __init__(self, ip, port):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server.bind((ip, host))
+        server.bind((ip, port))
         server.listen(5)
         self.server = server
         self.list_of_clients = []
@@ -24,9 +24,10 @@ class SocketServer:
 
                     # Calls broadcast function to send message to all
                     message_to_send = "<" + addr[0] + "> " + message
-                    self.broadcast(message_to_send, conn)
+                    #self.broadcast(message_to_send, conn)
                 else:
                     self.remove(conn)
+                    break
 
             except Exception:
                 continue
@@ -61,3 +62,10 @@ class SocketServer:
 
             # creates and individual thread for every user that connects
             threading.Thread(target=self.client_thread, args=((conn, addr)))
+
+def main():
+    server = SocketServer("0.0.0.0", 5000)
+    server.accept_connections()
+
+if __name__ == "__main__":
+    main()
