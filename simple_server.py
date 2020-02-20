@@ -20,7 +20,7 @@ class SocketServer:
         conn.send('Welcome to this chatroom!'.encode())
         while True:
             try:
-                message = conn.recv(2014).decode()
+                message = conn.recv(1024).decode()
                 if message:
 
                     # Calls broadcast function to send message to all
