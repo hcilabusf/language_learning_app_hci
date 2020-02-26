@@ -3,6 +3,7 @@ import socket
 from _thread import start_new_thread
 import threading
 import os
+import datetime
 
 class SocketServer:
     def __init__(self, ip, port):
@@ -14,43 +15,31 @@ class SocketServer:
         self.list_of_clients = []
 
     """ Thread for new client """
-    def client_thread(self, conn, addr):
+    def client_thread(self, conn, addr, i):
         # sends a message to the client whose user object is conn
-        
         conn.send('Welcome to this chatroom!'.encode())
         while True:
             try:
                 message = conn.recv(1024).decode()
                 if message:
-
                     # Calls broadcast function to send message to all
-                    message_to_send = "<" + addr[0] + "> " + message        
-                    print('msg to send: [' + message_to_send + ']')
-                    with open("tempfile", "a") as myfile:
+                    message_to_send = "<" + addr[0] + "> " + message
+                    #TODO add thread number  in the future
+                    date_object = datetime.date.today()
+                    filename = 'Thread' + str(i) + '_' +str(date_object)
+                    print(str(i) + ' - msg to write: [' + message_to_send + ']')
+                    with open(filename, "a") as myfile:
                         myfile.write(message_to_send)
-                        myfile.write('\n')            
-#                    self.broadcast(message_to_send)
-                    f.close()          
+                        myfile.write('\n')
+
                 else:
                     self.remove(conn)
+                    print("Disconnecting, %d", i)
                     break
 
-            except Exception:
+            except Exception as e:
+                print("Exception: %s" % str(e))
                 continue
-
-
-#    """ Broadcast a message to all connected clients"""
-#    def broadcast(self, message):
-#        #print("ALL connections: %s" % self.list_of_clients)
-#        print("\nBroadcast: Number of connections: %s" % len(self.list_of_clients))
-#        for clients in self.list_of_clients:
-#            try:
-#                print("Sending %s to: %s" % (message, clients))
-#                clients.send(message.encode())
-#            except Exception:
-#                clients.close()
-#                self.remove(clients)
-
 
     """ Remove a sockets connection """
     def remove(self, connection):
@@ -59,6 +48,7 @@ class SocketServer:
 
     """ Accept new socketes connections """
     def accept_connections(self):
+        i = 0
         while True:
             print('...in the connecting- start of true while loop')
             conn, addr = self.server.accept()
@@ -69,8 +59,12 @@ class SocketServer:
             print(addr[0] + " connected")
 
             # creates and individual thread for every user that connects
-            process = threading.Thread(target=self.client_thread, args=[conn, addr])
+            process = threading.Thread(target=self.client_thread, args=[conn, addr, i])
+
+            print('starting a new thread')
+            print('\tth_name: ' + process.name)
             process.start()
+            i += 1
 
 
 def main():
