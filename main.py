@@ -26,9 +26,9 @@ canSendMarker = False
 server_socket = None
 DUMMY_IP = "127.0.0.1"
 DUMMY_PORT = 8080
-SERVER_IP = "0.0.0.0"  # Might require change
-SERVER_PORT = 8080  # Might require change
 
+SERVER_IP = "0.0.0.0" # Might require change
+SERVER_PORT = 5000 # Might require change
 
 def send_data(class_label):
     global trialNum
@@ -143,7 +143,7 @@ def question(page):
 
 @app.route('/')
 def hello_world():
-    if connect_to_server(dummy_server=True):
+    if connect_to_server(dummy_server=False):
         return render_template("welcomePage.html")
     else:
         return "Failed to connect to server"
