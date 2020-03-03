@@ -14,15 +14,21 @@
             {% if page.is_test %}
               <h1>Test Question</h1>
             {% endif %}
-            <h2 class="card-title">Chinese: {{ page.chinese }}</h2>
+            <h4 align = "middle" class="card-title">Chinese: {{ page.chinese }}</h4>
 {#            <p>{{ session.error_count }}, {{ page.error_count_before_hint }} </p>#}
             <p><p class="card-text">
 
-            {% if (session.error_count[current_page] < page.error_count_before_hint) %}
-                Hint: {{ page.hint }}
+
+            {% if (session.error_count[current_page] < page.error_count_before_hint)%}
+                {% if page.hint != '' %}
+                Definition: {{page.answer}}
+                {% endif %}
             {% else %}
+                <br>
                 Hint: {{ page.answer }}
             {% endif %}
+
+
             </p></p>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
@@ -42,9 +48,11 @@
                 {% endif %}
             {% endwith %}
 
-            <form action="" method="post">
+            <form align = "middle" action="" method="post">
+                <label >English:  </label>
                 <input type="text" name="answer" autofocus/>
-                <input type="submit"/>
+                <input type="submit" value = "Check">
+
             </form>
 
         </div>

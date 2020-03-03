@@ -6,7 +6,8 @@ import time
 import uuid
 
 import flask
-from pages import PAGES, Page
+from page_list import PAGES
+from pages import Page
 from survey import SURVEY
 from socket_class import SocketClass
 
@@ -25,22 +26,21 @@ canSendMarker = False
 server_socket = None
 DUMMY_IP = "127.0.0.1"
 DUMMY_PORT = 8080
-SERVER_IP = "0.0.0.0" # Might require change
-SERVER_PORT = 8080 # Might require change
-
-
-
+SERVER_IP = "0.0.0.0"  # Might require change
+SERVER_PORT = 8080  # Might require change
 
 
 def send_data(class_label):
     global trialNum
     print("sending!")
 
-    milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
+    # Get current time in milliseconds
+    milliSec = int(round(time.time() * 1000))
 
     data = "{};{};{};\n".format(trialNum, class_label, milliSec)
-    trialNum += 1 # increment trial number
+    trialNum += 1  # increment trial number
     server_socket.send_data(data)
+
 
 """ Runs the server in a separate thread
     Args:
@@ -48,6 +48,8 @@ def send_data(class_label):
     Returns:
         boolean: Whether connection was established
 """
+
+
 def connect_to_server(dummy_server=False):
     global server_socket
     if dummy_server:
@@ -66,6 +68,7 @@ def connect_to_server(dummy_server=False):
 def menu():
     return render_template('menu.html')
 
+
 @app.route('/question/')
 def question_start():
     # send_data('baselinestart')
@@ -77,6 +80,7 @@ def question_start():
     # send_data('easystart')
 
     return redirect(url_for('question', page=0))
+
 
 @app.route('/question/<int:page>', methods=['GET', 'POST'])
 def question(page):
@@ -112,11 +116,11 @@ def question(page):
         got = request.form['answer']
         if got != expect:
             if PAGES[page].is_test:
-                return redirect(url_for('question', page=page+1))
+                return redirect(url_for('question', page=page + 1))
             session['error_count'][page_str] += 1
             flash('Wrong!')
             return redirect(url_for('question', page=page))
-        else: # means the answer is correct
+        else:  # means the answer is correct
 
             canSendMarker = True
             # if canSendMarker:
@@ -127,15 +131,12 @@ def question(page):
             #     if page == len(PAGES) - 1: # I finished the hard and will start survey so I will send hardend before starting the survey
             #         send_data('hardend')
 
-
             if PAGES[page].show_survey != 0:
                 return redirect(url_for('survey', survey_num=PAGES[page].show_survey, next_page=page + 1))
             else:
                 flash('Correct!')
                 session['error_count'][page_str] = 0
                 return redirect(url_for('question', page=page + 1))
-
-
 
     return render_template('question.html', page=PAGES[page], current_page=page_str)
 
@@ -146,6 +147,7 @@ def hello_world():
         return render_template("welcomePage.html")
     else:
         return "Failed to connect to server"
+
 
 @app.route('/survey/<int:survey_num>')
 def survey(survey_num):
@@ -158,4 +160,3 @@ def survey(survey_num):
     if survey_num == 3:
         message = 'end hard test, begin survey'
     return render_template('survey.html', survey_num=survey_num, next_page=next_page, url=SURVEY[survey_num - 1])
-
