@@ -82,7 +82,7 @@ class SocketServer:
 
 
 def main():
-    server = SocketServer("127.0.0.1", 8080)
+    server = SocketServer("192.168.2.201", 8080)
     server.accept_connections()
     print('end of main')
 
