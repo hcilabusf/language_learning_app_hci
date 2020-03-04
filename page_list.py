@@ -13,12 +13,16 @@ PATTERN = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
 PAGES = []
 
 
-for i in PATTERN:
-    if i == 1:
-        x = generate_easy_page()
-        for page in x:
-            PAGES.append(page)
-    elif i == 2:
-        x = generate_hard_task()
-        for page in x:
-            PAGES.append(page)
+def create_page(pattern):
+    for i in pattern:
+        if i == 1:
+            x = generate_easy_page()
+            for page in x:
+                PAGES.append(page)
+        elif i == 2:
+            x = generate_hard_task()
+            for page in x:
+                PAGES.append(page)
+
+
+create_page(PATTERN)

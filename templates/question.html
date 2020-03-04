@@ -14,18 +14,18 @@
             {% if page.is_test %}
               <h1>Test Question</h1>
             {% endif %}
-            <h4 align = "middle" class="card-title">Chinese: {{ page.chinese }}</h4>
+            <h2 style = "font-size: 50px" align = "left" class="card-title">  &nbsp &nbsp &nbsp &nbsp Chinese </h2>
+            <h2 style = "font-size: 70px" align = "left"> &nbsp &nbsp &nbsp &nbsp   {{ page.chinese }} </h2>
 {#            <p>{{ session.error_count }}, {{ page.error_count_before_hint }} </p>#}
-            <p><p class="card-text">
+            <p><p align = "left" class="card-text">
 
 
             {% if (session.error_count[current_page] < page.error_count_before_hint)%}
                 {% if page.hint != '' %}
-                Definition: {{page.answer}}
+                 <b>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Meaning:</b> {{page.answer}}
                 {% endif %}
             {% else %}
-                <br>
-                Hint: {{ page.answer }}
+                <b> &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Meaning:</b>  {{ page.answer }}
             {% endif %}
 
 
@@ -48,10 +48,10 @@
                 {% endif %}
             {% endwith %}
 
-            <form align = "middle" action="" method="post">
-                <label >English:  </label>
+            <form align = "left" action="" method="post">
+                <label size = "30" > &nbsp &nbsp &nbsp <b> English: </b>  </label>
                 <input type="text" name="answer" autofocus/>
-                <input type="submit" value = "Check">
+                <input type=submit value = "Check">
 
             </form>
 

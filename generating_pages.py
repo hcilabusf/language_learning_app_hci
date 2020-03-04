@@ -3,18 +3,26 @@ import copy
 import random
 from pages import Page
 
+
+def get_word_list_csv(filename):
+    with open(filename) as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=",")
+        line_counter = 0
+        for row in csv_reader:
+            if line_counter == 0:
+                line_counter += 1
+                continue
+            else:
+                page_list.append(
+                    Page(chinese=row[0], answer=row[1], hint=row[2]))
+
+
+# a List to store individual pages
 page_list = []
 
 
-with open("word_list.csv") as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter=",")
-    line_counter = 0
-    for row in csv_reader:
-        if line_counter == 0:
-            line_counter += 1
-            continue
-        else:
-            page_list.append(Page(chinese=row[0], answer=row[1], hint=row[2]))
+# Call the function to fill the list with pages based on the csv file
+get_word_list_csv("word_list.csv")
 
 
 def generate_easy_task():
@@ -32,32 +40,32 @@ def generate_easy_page():
     sample_dict = generate_easy_task()
     displaying_page = []
     for i in range(10):
-        PAGE_1 = sample_dict[0]
-        PAGE_2 = sample_dict[1]
+        page_1 = sample_dict[0]
+        page_2 = sample_dict[1]
         if i == 0:
-            displaying_page.append(PAGE_1)
+            displaying_page.append(page_1)
         elif i == 1:
-            displaying_page.append(PAGE_2)
+            displaying_page.append(page_2)
         elif i > 1:
             if i % 2 == 0:
-                PAGE_3 = copy.copy(PAGE_1)
-                PAGE_3.set_hint_off()
-                displaying_page.append(PAGE_3)
+                page_3 = copy.copy(page_1)
+                page_3.set_hint_off()
+                displaying_page.append(page_3)
             elif i % 2 != 0:
                 if i == 9:
-                    x = copy.copy(PAGE_2)
+                    x = copy.copy(page_2)
                     x.set_survey(1)
                     x.set_hint_off()
                     displaying_page.append(x)
                 else:
-                    PAGE_4 = copy.copy(PAGE_2)
-                    PAGE_4.set_hint_off()
-                    displaying_page.append(PAGE_4)
+                    page_4 = copy.copy(page_2)
+                    page_4.set_hint_off()
+                    displaying_page.append(page_4)
     return displaying_page
 
 
 def generate_hard_task():
-    PAGE = []
+    page = []
     page_1 = page_list.pop()
     page_2 = page_list.pop()
     page_3 = page_list.pop()
@@ -106,29 +114,29 @@ def generate_hard_task():
 
     for i in range(13):
         if i == 0:
-            PAGE.append(page_1)
+            page.append(page_1)
         elif i == 1:
-            PAGE.append(page_1_clone)
+            page.append(page_1_clone)
         elif i == 2:
-            PAGE.append(page_2)
+            page.append(page_2)
         elif i == 3:
-            PAGE.append(page_2_clone)
+            page.append(page_2_clone)
         elif i == 4:
-            PAGE.append(page_4)
+            page.append(page_4)
         elif i == 5:
-            PAGE.append(page_5)
+            page.append(page_5)
         elif i == 6:
-            PAGE.append(page_3)
+            page.append(page_3)
         elif i == 7:
-            PAGE.append(page_3_clone)
+            page.append(page_3_clone)
         elif i == 8:
-            PAGE.append(page_6)
+            page.append(page_6)
         elif i == 9:
-            PAGE.append(page_7)
+            page.append(page_7)
         elif i == 10:
-            PAGE.append(page_8)
+            page.append(page_8)
         elif i == 11:
-            PAGE.append(page_9)
+            page.append(page_9)
         elif i == 12:
-            PAGE.append(page_10)
-    return PAGE
+            page.append(page_10)
+    return page

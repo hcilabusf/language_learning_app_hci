@@ -71,13 +71,13 @@ def menu():
 
 @app.route('/question/')
 def question_start():
-    # send_data('baselinestart')
-    # session['uid'] = uuid.uuid1()
-    # time.sleep(3)
-    # send_data('baselineend')
-    # time.sleep(0.5)
+    send_data('baselinestart')
+    session['uid'] = uuid.uuid1()
+    time.sleep(3)
+    send_data('baselineend')
+    time.sleep(0.5)
 
-    # send_data('easystart')
+    send_data('easystart')
 
     return redirect(url_for('question', page=0))
 
@@ -94,9 +94,9 @@ def question(page):
 
     # this is called after I press next on the survey
 
-    # if canSendMarker and page == 10:
-    #     server_socket.send_data('hardstart')
-    #     canSendMarker = False # prevent from sending markers on wrong answers
+    if canSendMarker and page == 10:
+        server_socket.send_data('hardstart')
+        canSendMarker = False  # prevent from sending markers on wrong answers
 
     if page > len(PAGES):
         session.pop('error_count')
@@ -123,13 +123,14 @@ def question(page):
         else:  # means the answer is correct
 
             canSendMarker = True
-            # if canSendMarker:
-            #     if page == 9: # I finished the easy and will start survey so I will send easyend before starting the survey
-            #         send_data('easyend')
-            #         # I didn't change canSendMarker to false here because I need to send hard start when the new page 10 is loaded
+            if canSendMarker:
+                if page == 9:  # I finished the easy and will start survey so I will send easyend before starting the survey
+                    send_data('easyend')
+                    # I didn't change canSendMarker to false here because I need to send hard start when the new page 10 is loaded
 
-            #     if page == len(PAGES) - 1: # I finished the hard and will start survey so I will send hardend before starting the survey
-            #         send_data('hardend')
+                # I finished the hard and will start survey so I will send hardend before starting the survey
+                if page == len(PAGES) - 1:
+                    send_data('hardend')
 
             if PAGES[page].show_survey != 0:
                 return redirect(url_for('survey', survey_num=PAGES[page].show_survey, next_page=page + 1))
