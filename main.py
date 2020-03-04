@@ -6,7 +6,8 @@ import time
 import uuid
 
 import flask
-from pages import PAGES, Page
+from page_list import PAGES
+from pages import Page
 from survey import SURVEY
 from socket_class import SocketClass
 
@@ -25,6 +26,7 @@ canSendMarker = False
 server_socket = None
 DUMMY_IP = "127.0.0.1"
 DUMMY_PORT = 8080
+
 SERVER_IP = "0.0.0.0" # Might require change
 SERVER_PORT = 5000 # Might require change
 
@@ -32,11 +34,13 @@ def send_data(class_label):
     global trialNum
     print("sending!")
 
-    milliSec = int(round(time.time() * 1000))  # Get current time in milliseconds
+    # Get current time in milliseconds
+    milliSec = int(round(time.time() * 1000))
 
     data = "{};{};{};\n".format(trialNum, class_label, milliSec)
-    trialNum += 1 # increment trial number
+    trialNum += 1  # increment trial number
     server_socket.send_data(data)
+
 
 """ Runs the server in a separate thread
     Args:
@@ -44,6 +48,8 @@ def send_data(class_label):
     Returns:
         boolean: Whether connection was established
 """
+
+
 def connect_to_server(dummy_server=False):
     global server_socket
     if dummy_server:
@@ -57,6 +63,12 @@ def connect_to_server(dummy_server=False):
         return True
     return False
 
+
+@app.route('/menu/')
+def menu():
+    return render_template('menu.html')
+
+
 @app.route('/question/')
 def question_start():
     send_data('baselinestart')
@@ -69,26 +81,32 @@ def question_start():
 
     return redirect(url_for('question', page=0))
 
+
 @app.route('/question/<int:page>', methods=['GET', 'POST'])
 def question(page):
     global canSendMarker
     page_str = str(page)
 
+    if 'error_count' not in session:
+        session['error_count'] = {}
+    if page_str not in session['error_count']:
+        session['error_count'][page_str] = 0
+
     # this is called after I press next on the survey
 
     if canSendMarker and page == 10:
         server_socket.send_data('hardstart')
-        canSendMarker = False # prevent from sending markers on wrong answers
+        canSendMarker = False  # prevent from sending markers on wrong answers
 
-    if page >= len(PAGES):
+    if page > len(PAGES):
         session.pop('error_count')
         session.pop('uid')
         return render_template("cong.html")
 
     # Adding condition for method!=POST so, we only send marker when page loads,
     # not twice, for when page loads, and when the user submits an answer.
-    if PAGES[page].marker_data!='' and request.method!='POST':
-        server_socket.send_data(PAGES[page].marker_data)
+    # if PAGES[page].marker_data!='' and request.method!='POST':
+    #     server_socket.send_data(PAGES[page].marker_data)
 
     if request.method == 'POST':
         expect = PAGES[page].answer
@@ -98,21 +116,21 @@ def question(page):
         got = request.form['answer']
         if got != expect:
             if PAGES[page].is_test:
-                return redirect(url_for('question', page=page+1))
+                return redirect(url_for('question', page=page + 1))
             session['error_count'][page_str] += 1
             flash('Wrong!')
             return redirect(url_for('question', page=page))
-        else: # means the answer is correct
+        else:  # means the answer is correct
 
             canSendMarker = True
             if canSendMarker:
-                if page == 9: # I finished the easy and will start survey so I will send easyend before starting the survey
+                if page == 9:  # I finished the easy and will start survey so I will send easyend before starting the survey
                     send_data('easyend')
                     # I didn't change canSendMarker to false here because I need to send hard start when the new page 10 is loaded
 
-                if page == len(PAGES) - 1: # I finished the hard and will start survey so I will send hardend before starting the survey
+                # I finished the hard and will start survey so I will send hardend before starting the survey
+                if page == len(PAGES) - 1:
                     send_data('hardend')
-
 
             if PAGES[page].show_survey != 0:
                 return redirect(url_for('survey', survey_num=PAGES[page].show_survey, next_page=page + 1))
@@ -120,11 +138,6 @@ def question(page):
                 flash('Correct!')
                 session['error_count'][page_str] = 0
                 return redirect(url_for('question', page=page + 1))
-
-    if 'error_count' not in session:
-        session['error_count'] = {}
-    if page_str not in session['error_count']:
-        session['error_count'][page_str] = 0
 
     return render_template('question.html', page=PAGES[page], current_page=page_str)
 
@@ -136,6 +149,7 @@ def hello_world():
     else:
         return "Failed to connect to server"
 
+
 @app.route('/survey/<int:survey_num>')
 def survey(survey_num):
     next_page = request.args.get('next_page')
@@ -146,6 +160,4 @@ def survey(survey_num):
         message = 'end med test, begin survey'
     if survey_num == 3:
         message = 'end hard test, begin survey'
-
     return render_template('survey.html', survey_num=survey_num, next_page=next_page, url=SURVEY[survey_num - 1])
-
